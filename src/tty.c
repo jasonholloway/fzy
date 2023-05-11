@@ -60,7 +60,7 @@ void tty_init(tty_t *tty, const char *tty_filename) {
 	 * ICRNL   Conversion of CR characters into NL
 	 */
 	new_termios.c_iflag &= ~(ICRNL);
-	new_termios.c_lflag &= ~(ICANON | ECHO | ISIG);
+	new_termios.c_lflag &= ~(ICANON | ECHO); // | ISIG);
 
 	if (tcsetattr(tty->fdin, TCSANOW, &new_termios))
 		perror("tcsetattr");

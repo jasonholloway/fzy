@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 #include "match.h"
 #include "tty_interface.h"
@@ -262,7 +263,18 @@ static void append_search(tty_interface_t *state, char ch) {
 	}
 }
 
+static tty_interface_t *tty_state;
+
+static void handle_sigint(int sig){
+	(void)sig;
+	clear(tty_state);
+	tty_close(tty_state->tty);
+	exit(1);
+}
+
 void tty_interface_init(tty_interface_t *state, tty_t *tty, choices_t *choices, options_t *options) {
+	tty_state = state;
+	
 	state->tty = tty;
 	state->choices = choices;
 	state->options = options;
@@ -280,6 +292,8 @@ void tty_interface_init(tty_interface_t *state, tty_t *tty, choices_t *choices, 
 	state->cursor = strlen(state->search);
 
 	update_search(state);
+
+	signal(SIGINT, handle_sigint);
 }
 
 typedef struct {
